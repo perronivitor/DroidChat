@@ -114,58 +114,10 @@ fun PrimaryTextField(
             Text(
                 text = it,
                 modifier = Modifier.padding(start = 16.dp),
-                color = MaterialTheme.colorScheme.error
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
-
-        /**
-         * Implementação pelo BasicTextField
-         *
-        BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        decorationBox = { innerTextField ->
-        Surface(shape = CircleShape) {
-        Row(
-        modifier = Modifier
-        .padding(16.dp)
-        .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-        ) {
-        leadingIcon?.let {
-        Image(
-        painter = painterResource(id = leadingIcon),
-        contentDescription = null
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-        }
-
-        Box(
-        modifier = Modifier.weight(1f)
-        ) {
-        innerTextField()
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Image(
-        painter = painterResource(id = R.drawable.ic_bottom_nav_profile),
-        contentDescription = null
-        )
-        }
-        }
-        }
-        )
-
-        errorMessage?.let {
-        Text(
-        text = "Senha é obrigatória",
-        modifier = Modifier.padding(start = 16.dp),
-        color = ColorError
-        )
-        }
-         **/
     }
 }
 
@@ -179,6 +131,21 @@ private fun PrimaryTextFieldPreview() {
             placeholder = "E-mail",
             leadingIcon = R.drawable.ic_envelope,
             keyboardType = KeyboardType.Password
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PrimaryTextFieldErrorPreview() {
+    DroidChatTheme {
+        PrimaryTextField(
+            value = "",
+            onValueChange = {},
+            placeholder = "E-mail",
+            leadingIcon = R.drawable.ic_envelope,
+            keyboardType = KeyboardType.Password,
+            errorMessage = "E-mail é obrigatório"
         )
     }
 }
