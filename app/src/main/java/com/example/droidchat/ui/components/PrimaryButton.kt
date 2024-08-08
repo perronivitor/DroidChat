@@ -17,28 +17,21 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.droidchat.ui.components.PrimaryButtonState.Idle
-import com.example.droidchat.ui.components.PrimaryButtonState.Loading
 import com.example.droidchat.ui.theme.DroidChatTheme
-
-sealed class PrimaryButtonState {
-    data object Idle : PrimaryButtonState()
-    data object Loading : PrimaryButtonState()
-}
 
 @Composable
 fun PrimaryButton(
     text: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    state: PrimaryButtonState,
+    isLoading: Boolean = false,
 ) {
 
     Button(
         onClick = onClick,
         modifier = modifier
             .height(64.dp),
-        enabled = state != Loading,
+        enabled = !isLoading,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -49,29 +42,26 @@ fun PrimaryButton(
         Box(
             modifier = Modifier.animateContentSize()
         ) {
-            when (state) {
-                Loading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(30.dp)
-                            .aspectRatio(1f),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeCap = StrokeCap.Round
-                    )
-                }
+            if (isLoading) {
 
-                Idle -> {
-                    Text(
-                        text = text,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
-                }
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .aspectRatio(1f),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeCap = StrokeCap.Round
+                )
+            } else {
+                Text(
+                    text = text,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
-
 }
+
 
 @Preview
 @Composable
@@ -80,7 +70,7 @@ private fun PrimaryButtonIdlePreview() {
         PrimaryButton(
             text = "Sign in",
             onClick = {},
-            state = Idle
+            isLoading = false
         )
     }
 }
@@ -92,7 +82,7 @@ private fun PrimaryButtonLoadingPreview() {
         PrimaryButton(
             text = "Sign in",
             onClick = {},
-            state = Loading
+            isLoading = true
         )
     }
 }
