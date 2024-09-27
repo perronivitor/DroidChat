@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.droidchat.R
+import com.example.droidchat.navigation.extemsion.bottomBorder
 import com.example.droidchat.ui.extension.getVisualTransformationForPassword
 import com.example.droidchat.ui.theme.ColorSuccess
 import com.example.droidchat.ui.theme.DroidChatTheme
@@ -72,11 +73,13 @@ fun SecondaryTextField(
         )
     ) { innerTextField ->
         Surface(
-            modifier = modifier,
-            color = MaterialTheme.colorScheme.surface,
-            shape = MaterialTheme.shapes.small
+            modifier = modifier
         ) {
             Row(
+                modifier = Modifier.bottomBorder(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    1.dp
+                ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
