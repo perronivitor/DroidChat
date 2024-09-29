@@ -10,15 +10,11 @@ import com.example.droidchat.navigation.ChatNavHost
 
 @Composable
 fun ChatApp() {
-     Scaffold (
-         bottomBar = {
-             //VAZIO
-         }
-     ) { paddingValues ->
+     Scaffold { innerPadding ->
          Box(
              modifier = Modifier
-                 .padding(paddingValues)
                  .fillMaxSize()
+                 .padding(innerPadding)
          ) {
             ChatNavHost()
          }
