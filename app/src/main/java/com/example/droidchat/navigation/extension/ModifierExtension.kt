@@ -1,4 +1,4 @@
-package com.example.droidchat.navigation.extemsion
+package com.example.droidchat.navigation.extension
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind

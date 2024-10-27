@@ -51,7 +51,7 @@ class SignUpViewModel(
             }
 
             is SignUpFormEvent.Submit -> {
-                doSignUn()
+                doSignUp()
             }
 
         }
@@ -70,7 +70,7 @@ class SignUpViewModel(
         )
     }
 
-    private fun doSignUn() {
+    private fun doSignUp() {
         if (isValidForm()) {
             formState = formState.copy(isLoading = true)
             //Request API
