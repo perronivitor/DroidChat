@@ -1,6 +1,6 @@
 [versions]
 accompanistPermissions = "0.34.0"
-agp = "8.5.2"
+agp = "8.6.1"
 coilCompose = "2.5.0"
 coreSplashscreen = "1.0.1"
 datastorePreferences = "1.1.1"
@@ -8,11 +8,11 @@ firebaseBom = "33.5.1"
 hiltAndroid = "2.50"
 hiltNavigationCompose = "1.2.0"
 jwtdecode = "2.0.2"
-kotlin = "2.0.0"
+kotlin = "2.0.20"
 kotlinxCoroutinesAndroid = "1.8.0"
 kotlinxSerializationJson = "1.6.0"
-ksp = "2.0.0-1.0.21"
-coreKtx = "1.13.1"
+ksp = "2.0.21-1.0.26"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -25,9 +25,9 @@ ktorClientLogging = "2.3.6"
 ktorClientResources = "2.3.6"
 ktorClientWebsockets = "2.3.6"
 ktorSerializationKotlinxJson = "2.3.6"
-lifecycleRuntimeKtx = "2.8.6"
+lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.10.00"
+composeBom = "2024.10.01"
 navigationCompose = "2.8.3"
 protobufJavalite = "3.24.4"
 
@@ -77,3 +77,4 @@ jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "k
 kotlinKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid"}
