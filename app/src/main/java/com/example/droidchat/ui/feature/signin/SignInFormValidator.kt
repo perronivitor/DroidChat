@@ -4,8 +4,9 @@ import com.example.droidchat.R
 import com.example.droidchat.ui.validator.EmailValidator
 import com.example.droidchat.ui.validator.FormValidator
 import com.example.droidchat.ui.validator.PasswordValidator
+import javax.inject.Inject
 
-class SignInFormValidator : FormValidator<SignInFormState> {
+class SignInFormValidator @Inject constructor() : FormValidator<SignInFormState> {
     override fun validate(formState: SignInFormState): SignInFormState {
         val isEmailValid = EmailValidator.isValid(formState.email)
         val isPasswordValid = PasswordValidator.isValid(formState.password)

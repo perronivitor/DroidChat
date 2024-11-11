@@ -5,10 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.droidchat.ui.validator.FormValidator
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-class SignInViewModel (
+@HiltViewModel
+class SignInViewModel @Inject constructor(
     private val signInFormValidator: FormValidator<SignInFormState>,
 ) : ViewModel() {
 
