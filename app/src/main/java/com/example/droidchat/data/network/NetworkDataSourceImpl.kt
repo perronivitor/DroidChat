@@ -13,19 +13,15 @@ class NetworkDataSourceImpl @Inject constructor(
     private val httpClient: HttpClient,
 ) : NetworkDataSource {
     override suspend fun signUp(request: CreateAccountRequest) {
-        handleNetworkException {
-            httpClient.post("signup") {
-                setBody(request)
-            }.body<Unit>()
-        }
+        return httpClient.post("signup") {
+            setBody(request)
+        }.body<Unit>()
     }
 
     override suspend fun signIn(request: AuthRequest): TokenResponse {
-        return handleNetworkException {
-            httpClient.post("signin") {
-                setBody(request)
-            }.body<TokenResponse>()
-        }
+        return httpClient.post("signin") {
+            setBody(request)
+        }.body<TokenResponse>()
     }
 }
 

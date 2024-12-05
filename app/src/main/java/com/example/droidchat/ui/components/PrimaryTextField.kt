@@ -47,7 +47,6 @@ fun PrimaryTextField(
     Column(
         modifier = modifier
     ) {
-
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
