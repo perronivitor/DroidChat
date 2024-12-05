@@ -8,10 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.droidchat.R
 import com.example.droidchat.data.repository.AuthRepository
 import com.example.droidchat.model.CreateAccount
-import com.example.droidchat.model.NetworkException
 import com.example.droidchat.ui.validator.FormValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.plugins.ClientRequestException
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
@@ -84,26 +82,22 @@ class SignUpViewModel @Inject constructor(
         if (isValidForm()) {
             formState = formState.copy(isLoading = true)
             viewModelScope.launch {
-                try {
-                    authRepository.signUp(
-                        createAccount = CreateAccount(
-                            username = "",
-                            password = "",
-                            firstName = formState.firstName,
-                            lastName = formState.lastName,
-                            profilePictureId = null,
-                        )
+                authRepository.signUp(
+                    createAccount = CreateAccount(
+                        username = "",
+                        password = "",
+                        firstName = formState.firstName,
+                        lastName = formState.lastName,
+                        profilePictureId = null,
                     )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    if (e is NetworkException.ApiException) {
-                        // Mostrar erro de validação de campos para o usuário
-                    } else {
-                        // Mostrar erro generico para o usuário
+                ).fold(
+                    onSuccess = {
+                        formState = formState.copy(isLoading = false)
+                    },
+                    onFailure = {
+                        formState = formState.copy(isLoading = false)
                     }
-
-                }
-
+                )
             }
         }
     }
