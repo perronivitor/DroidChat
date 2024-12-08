@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,7 +30,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.droidchat.R
 import com.example.droidchat.ui.components.PrimaryButton
 import com.example.droidchat.ui.components.ProfilePictureOptionModalBottomSheet
@@ -46,6 +48,31 @@ fun SignUpRoute(
         formState = formState,
         onFormEvent = viewModel::onFormEvent
     )
+
+    formState.apiErrorMessageResId?.let { resId ->
+        AlertDialog(
+            onDismissRequest = viewModel::errorMessageShown,
+            confirmButton = {
+                TextButton(
+                    onClick = {}
+                ) {
+                    Text(text = stringResource(id = R.string.common_ok))
+                }
+            },
+            title = {
+                Text(text = stringResource(id = R.string.common_generic_error_title))
+            },
+            text = {
+                Text(
+                    text = stringResource(id = resId),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurface
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -168,7 +195,8 @@ fun SignUpScreen(
                         text = stringResource(id = R.string.feature_sign_up_button),
                         onClick = {
                             onFormEvent(SignUpFormEvent.Submit)
-                        }
+                        },
+                        isLoading = formState.isLoading
                     )
                 }
 
@@ -196,7 +224,6 @@ fun SignUpScreen(
             }
         }
     }
-
 }
 
 @Preview
