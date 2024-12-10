@@ -5,6 +5,7 @@ import com.example.droidchat.data.network.NetworkDataSource
 import com.example.droidchat.data.network.model.AuthRequest
 import com.example.droidchat.data.network.model.CreateAccountRequest
 import com.example.droidchat.model.CreateAccount
+import com.example.droidchat.model.Image
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -37,6 +38,21 @@ class AuthRepositoryImpl @Inject constructor(
                     password = password
                 )
             )
+        }
+    }
+
+    override suspend fun uploadProfilePicture(filePath: String): Result<Image> {
+        return withContext(ioDispatcher) {
+            runCatching {
+                val imageResponse = networkDataSource.uploadProfilePicture(filePath)
+
+                Image(
+                    id = imageResponse.id,
+                    name = imageResponse.name,
+                    type = imageResponse.type,
+                    url = imageResponse.url
+                )
+            }
         }
     }
 }
