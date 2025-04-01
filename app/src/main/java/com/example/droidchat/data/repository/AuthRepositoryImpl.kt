@@ -31,13 +31,17 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signIn(username: String, password: String): Result<Unit> {
-        return runCatching {
-            networkDataSource.signIn(
-                request = AuthRequest(
-                    username = username,
-                    password = password
+        return withContext(ioDispatcher) {
+            runCatching {
+                val tokenResponse = networkDataSource.signIn(
+                    request = AuthRequest(
+                        username = username,
+                        password = password
+                    )
                 )
-            )
+
+                // TODO: SALVAR TOKEN BANCO DADOS LOCAL
+            }
         }
     }
 
