@@ -1,6 +1,7 @@
 package com.example.droidchat.data.repository
 
 import com.example.droidchat.data.di.IoDispatcher
+import com.example.droidchat.data.manager.TokenManager
 import com.example.droidchat.data.network.NetworkDataSource
 import com.example.droidchat.data.network.model.AuthRequest
 import com.example.droidchat.data.network.model.CreateAccountRequest
@@ -12,6 +13,7 @@ import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl @Inject constructor(
     private val networkDataSource: NetworkDataSource,
+    private val tokenManager: TokenManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : AuthRepository {
     override suspend fun signUp(createAccount: CreateAccount): Result<Unit> {
@@ -40,7 +42,7 @@ class AuthRepositoryImpl @Inject constructor(
                     )
                 )
 
-                // TODO: SALVAR TOKEN BANCO DADOS LOCAL
+               tokenManager.saveAccessToken(accessToken = tokenResponse.token)
             }
         }
     }
