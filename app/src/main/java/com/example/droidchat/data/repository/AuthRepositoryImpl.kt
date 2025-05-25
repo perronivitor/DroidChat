@@ -1,18 +1,16 @@
 package com.example.droidchat.data.repository
 
-import android.util.Log
 import com.example.droidchat.data.di.IoDispatcher
 import com.example.droidchat.data.manager.TokenManager
 import com.example.droidchat.data.network.NetworkDataSource
 import com.example.droidchat.data.network.model.AuthRequest
 import com.example.droidchat.data.network.model.CreateAccountRequest
+import com.example.droidchat.data.network.model.UserResponse
 import com.example.droidchat.model.CreateAccount
 import com.example.droidchat.model.Image
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl @Inject constructor(
@@ -21,9 +19,23 @@ class AuthRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : AuthRepository {
 
-    init {
-        GlobalScope.launch(ioDispatcher) {
-            Log.d("AuthRepositoryImpl", "Access Token: ${tokenManager.accessToken.first()}")
+    override suspend fun getAccessToken(): String? {
+        return tokenManager.accessToken.firstOrNull()
+    }
+
+    override suspend fun cleanAccessToken() {
+        withContext(ioDispatcher) {
+            tokenManager.cleanAccessToken()
+        }
+    }
+
+    override suspend fun authenticate(token: String): Result<UserResponse> {
+        return withContext(ioDispatcher) {
+            runCatching {
+                val userResponse = networkDataSource.authenticate(token)
+                userResponse
+                //Salvar o usuario autenticado no DataStore
+            }
         }
     }
 
