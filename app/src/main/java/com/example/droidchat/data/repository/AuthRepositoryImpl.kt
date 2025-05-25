@@ -1,5 +1,6 @@
 package com.example.droidchat.data.repository
 
+import android.util.Log
 import com.example.droidchat.data.di.IoDispatcher
 import com.example.droidchat.data.manager.TokenManager
 import com.example.droidchat.data.network.NetworkDataSource
@@ -9,6 +10,9 @@ import com.example.droidchat.model.CreateAccount
 import com.example.droidchat.model.Image
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl @Inject constructor(
@@ -16,6 +20,13 @@ class AuthRepositoryImpl @Inject constructor(
     private val tokenManager: TokenManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : AuthRepository {
+
+    init {
+        GlobalScope.launch(ioDispatcher) {
+            Log.d("AuthRepositoryImpl", "Access Token: ${tokenManager.accessToken.first()}")
+        }
+    }
+
     override suspend fun signUp(createAccount: CreateAccount): Result<Unit> {
         return withContext(ioDispatcher) {
             runCatching {
@@ -42,7 +53,7 @@ class AuthRepositoryImpl @Inject constructor(
                     )
                 )
 
-               tokenManager.saveAccessToken(accessToken = tokenResponse.token)
+                tokenManager.saveAccessToken(accessToken = tokenResponse.token)
             }
         }
     }
