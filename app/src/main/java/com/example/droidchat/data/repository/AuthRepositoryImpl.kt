@@ -1,7 +1,8 @@
 package com.example.droidchat.data.repository
 
 import com.example.droidchat.data.di.IoDispatcher
-import com.example.droidchat.data.manager.TokenManager
+import com.example.droidchat.data.manager.selfuser.SelfUserManager
+import com.example.droidchat.data.manager.token.TokenManager
 import com.example.droidchat.data.network.NetworkDataSource
 import com.example.droidchat.data.network.model.AuthRequest
 import com.example.droidchat.data.network.model.CreateAccountRequest
@@ -16,6 +17,7 @@ import kotlinx.coroutines.withContext
 class AuthRepositoryImpl @Inject constructor(
     private val networkDataSource: NetworkDataSource,
     private val tokenManager: TokenManager,
+    private val selfUserManager: SelfUserManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : AuthRepository {
 
@@ -29,12 +31,17 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun authenticate(token: String): Result<UserResponse> {
+    override suspend fun authenticate(token: String): Result<Unit> {
         return withContext(ioDispatcher) {
             runCatching {
                 val userResponse = networkDataSource.authenticate(token)
-                userResponse
-                //Salvar o usuario autenticado no DataStore
+
+                selfUserManager.saveSelfUser(
+                    firstName = userResponse.firstName,
+                    lastName = userResponse.lastName,
+                    profilePictureUrl = userResponse.profilePictureUrl.orEmpty(),
+                    username = userResponse.username
+                )
             }
         }
     }
