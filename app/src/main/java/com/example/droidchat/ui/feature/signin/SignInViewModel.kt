@@ -54,6 +54,7 @@ class SignInViewModel @Inject constructor(
                 ).fold(
                     onSuccess = {
                         formState = formState.copy(isLoading = false)
+                        _signInActionFlow.emit(SignInAction.Success)
                     },
                     onFailure = {
                         formState = formState.copy(isLoading = false)
