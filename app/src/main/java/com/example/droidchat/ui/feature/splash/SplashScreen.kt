@@ -48,8 +48,8 @@ fun SplashRoute(
     LaunchedEffect(Unit) {
         viewModel.authenticationState.collect { authenticationState ->
             when (authenticationState) {
-                UserAuthenticated -> onNavigateToSignIn()
-                UserNotAuthenticated -> onNavigateToMain()
+                UserAuthenticated -> onNavigateToMain()
+                UserNotAuthenticated -> onNavigateToSignIn()
             }
         }
     }
