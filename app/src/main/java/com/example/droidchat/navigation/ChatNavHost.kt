@@ -1,6 +1,5 @@
 package com.example.droidchat.navigation
 
-import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Left
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Right
@@ -13,14 +12,16 @@ import androidx.navigation.navOptions
 import com.example.droidchat.navigation.extension.slideInTo
 import com.example.droidchat.navigation.extension.slideOutTo
 import com.example.droidchat.ui.feature.chats.ChatsScreenRoute
-import com.example.droidchat.ui.feature.chats.navigateToChat
+import com.example.droidchat.ui.feature.chats.navigateToChats
 import com.example.droidchat.ui.feature.signin.SignInRoute
 import com.example.droidchat.ui.feature.signup.SignUpRoute
 import com.example.droidchat.ui.feature.splash.SplashRoute
 
 @Composable
-fun ChatNavHost() {
-    val navController = rememberNavController()
+fun ChatNavHost(
+    navigationState: DroidChatNavigationState
+) {
+    val navController = navigationState.navController
     val activity = LocalActivity.current
 
     NavHost(navController = navController, startDestination = Route.SplashRoute) {
@@ -37,7 +38,7 @@ fun ChatNavHost() {
                     )
                 },
                 onNavigateToMain = {
-                    navController.navigateToChat(
+                    navController.navigateToChats(
                         navOptions = navOptions {
                             popUpTo(Route.SplashRoute) {
                                 inclusive = true
@@ -70,7 +71,7 @@ fun ChatNavHost() {
                     navController.navigate(Route.SignUpRoute)
                 },
                 navigateToMain = {
-                    navController.navigateToChat(
+                    navController.navigateToChats(
                         navOptions = navOptions {
                             popUpTo(Route.SignInRoute) {
                                 inclusive = true

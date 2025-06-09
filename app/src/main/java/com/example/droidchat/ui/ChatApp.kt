@@ -9,18 +9,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.droidchat.navigation.ChatNavHost
+import com.example.droidchat.navigation.rememberDroidChatNavigationState
 
 @Composable
 fun ChatApp() {
-     Scaffold { innerPadding ->
-         Box(
-             modifier = Modifier
-                 .consumeWindowInsets(innerPadding)
-                 .padding(innerPadding)
-                 .imePadding()
-                 .fillMaxSize()
-         ) {
-            ChatNavHost()
-         }
-     }
+    val navigationState = rememberDroidChatNavigationState()
+
+    Scaffold(
+        bottomBar = {
+
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .consumeWindowInsets(innerPadding)
+                .padding(innerPadding)
+                .imePadding()
+                .fillMaxSize()
+        ) {
+            ChatNavHost(navigationState = navigationState)
+        }
+    }
 }
