@@ -20,7 +20,7 @@ class SplashViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    private val _authenticationState = MutableSharedFlow<AuthenticationState>()
+    private val _authenticationState = MutableSharedFlow<AuthenticationState>(replay = 1)
     val authenticationState = _authenticationState.asSharedFlow()
 
     var showErrorDialogState by mutableStateOf(false)
