@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.droidchat.navigation.ChatNavHost
 import com.example.droidchat.navigation.rememberDroidChatNavigationState
+import com.example.droidchat.ui.components.BottomNavigationMenu
+import com.example.droidchat.ui.theme.Grey1
 
 @Composable
 fun ChatApp() {
@@ -17,8 +19,11 @@ fun ChatApp() {
 
     Scaffold(
         bottomBar = {
-
-        }
+            if (navigationState.currentTopLevelDestination != null) {
+                BottomNavigationMenu(navigationState = navigationState)
+            }
+        },
+        contentColor = Grey1
     ) { innerPadding ->
         Box(
             modifier = Modifier
