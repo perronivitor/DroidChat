@@ -6,7 +6,6 @@ import com.example.droidchat.data.manager.token.TokenManager
 import com.example.droidchat.data.network.NetworkDataSource
 import com.example.droidchat.data.network.model.AuthRequest
 import com.example.droidchat.data.network.model.CreateAccountRequest
-import com.example.droidchat.data.network.model.UserResponse
 import com.example.droidchat.model.CreateAccount
 import com.example.droidchat.model.Image
 import javax.inject.Inject
@@ -40,7 +39,8 @@ class AuthRepositoryImpl @Inject constructor(
                     firstName = userResponse.firstName,
                     lastName = userResponse.lastName,
                     profilePictureUrl = userResponse.profilePictureUrl.orEmpty(),
-                    username = userResponse.username
+                    username = userResponse.username,
+                    id = userResponse.id
                 )
             }
         }

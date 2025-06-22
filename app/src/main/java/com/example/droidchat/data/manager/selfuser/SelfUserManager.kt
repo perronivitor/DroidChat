@@ -19,6 +19,7 @@ interface SelfUserManager {
         lastName: String,
         profilePictureUrl: String,
         username: String,
+        id: Int,
     )
 
     suspend fun cleanSelfUser()
@@ -39,6 +40,7 @@ class SelfUserManagerImpl @Inject constructor(
         lastName: String,
         profilePictureUrl: String,
         username: String,
+        id: Int,
     ) {
         withContext(ioDispatcher) {
             selfUserStore.updateData { selfUser ->
@@ -47,6 +49,7 @@ class SelfUserManagerImpl @Inject constructor(
                     .setProfilePictureUrl(profilePictureUrl)
                     .setFirstName(firstName)
                     .setLastName(lastName)
+                    .setId(id)
                     .build()
             }
         }
@@ -60,6 +63,7 @@ class SelfUserManagerImpl @Inject constructor(
                     .clearProfilePictureUrl()
                     .clearFirstName()
                     .clearLastName()
+                    .clearId()
                     .build()
             }
         }
