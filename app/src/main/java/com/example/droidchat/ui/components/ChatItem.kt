@@ -34,7 +34,7 @@ fun ChatItem(
     val receiver = remember(chat.members) {
         chat.members.first { it.self.not() }
     }
-    
+
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()

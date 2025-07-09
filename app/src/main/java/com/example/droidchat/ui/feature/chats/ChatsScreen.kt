@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,6 +32,7 @@ import com.example.droidchat.ui.components.ChatItem
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Error
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Loading
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Success
+import com.example.droidchat.ui.preview.ChatListPreviewParameterProvider
 import com.example.droidchat.ui.theme.DroidChatTheme
 
 @Composable
@@ -128,11 +130,13 @@ private fun ChatsScreenLoadingPreview() {
 
 @Preview
 @Composable
-private fun ChatsScreenSuccessPreview() {
+private fun ChatsScreenSuccessPreview(
+    @PreviewParameter(ChatListPreviewParameterProvider::class) chats: List<Chat>,
+) {
     DroidChatTheme {
         ChatsScreenScreen(
             chatsListUiState = Success(
-                chats = emptyList()
+                chats = chats
             )
         )
     }
