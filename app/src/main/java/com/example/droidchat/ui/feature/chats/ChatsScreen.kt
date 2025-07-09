@@ -111,7 +111,7 @@ fun ChatsScreenScreen(
 fun ChatsListContent(chats: List<Chat>) {
     LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
         itemsIndexed(chats) { index, chat ->
-            ChatItem()
+            ChatItem(chat = chat)
         }
     }
 }
