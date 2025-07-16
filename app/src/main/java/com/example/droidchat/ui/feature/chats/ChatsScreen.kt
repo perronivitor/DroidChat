@@ -2,14 +2,15 @@ package com.example.droidchat.ui.feature.chats
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,11 +30,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.droidchat.R
 import com.example.droidchat.model.Chat
 import com.example.droidchat.ui.components.ChatItem
+import com.example.droidchat.ui.components.ChatItemShimmer
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Error
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Loading
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Success
 import com.example.droidchat.ui.preview.ChatListPreviewParameterProvider
 import com.example.droidchat.ui.theme.DroidChatTheme
+import com.example.droidchat.ui.theme.Grey1
 
 @Composable
 fun ChatsScreenRoute(
@@ -58,21 +61,17 @@ fun ChatsScreenScreen(
                     Text(
                         text = AnnotatedString.fromHtml(
                             stringResource(
-                                id = R.string.feature_chats_greeting,
-                                "Vitor"
+                                id = R.string.feature_chats_greeting, "Vitor"
                             )
                         ),
                         color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.titleLarge
                     )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
+                }, colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary
-                ),
-                expandedHeight = 100.dp
+                ), expandedHeight = 100.dp
             )
-        },
-        containerColor = MaterialTheme.colorScheme.primary
+        }, containerColor = MaterialTheme.colorScheme.primary
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -80,21 +79,28 @@ fun ChatsScreenScreen(
                 .background(
                     color = MaterialTheme.colorScheme.surface,
                     shape = MaterialTheme.shapes.extraLarge.copy(
-                        bottomStart = CornerSize(0.dp),
-                        bottomEnd = CornerSize(0.dp)
+                        bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp)
                     )
                 )
                 .clip(
                     shape = MaterialTheme.shapes.extraLarge.copy(
-                        bottomStart = CornerSize(0.dp),
-                        bottomEnd = CornerSize(0.dp)
+                        bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp)
                     )
                 )
                 .fillMaxSize()
         ) {
             when (chatsListUiState) {
                 is Loading -> {
-                    CircularProgressIndicator()
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        repeat(10) { index ->
+                            ChatItemShimmer()
+
+                            if (index < 9) {
+                                HorizontalDivider(color = Grey1)
+                            }
+                        }
+                    }
+
                 }
 
                 is Success -> {
