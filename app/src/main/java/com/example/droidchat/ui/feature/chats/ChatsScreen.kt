@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.droidchat.R
 import com.example.droidchat.model.Chat
 import com.example.droidchat.ui.components.ChatItem
+import com.example.droidchat.ui.components.ChatItemError
 import com.example.droidchat.ui.components.ChatItemShimmer
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Error
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Loading
@@ -45,7 +46,10 @@ fun ChatsScreenRoute(
     val chatsListUiState = viewModel.chatsListUiState.collectAsStateWithLifecycle()
 
     ChatsScreenScreen(
-        chatsListUiState = chatsListUiState.value
+        chatsListUiState = chatsListUiState.value,
+        onTryAgainClicked = {
+            viewModel.getChats()
+        }
     )
 }
 
@@ -53,6 +57,7 @@ fun ChatsScreenRoute(
 @Composable
 fun ChatsScreenScreen(
     chatsListUiState: ChatsViewModel.ChatsListUiState,
+    onTryAgainClicked: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -108,7 +113,7 @@ fun ChatsScreenScreen(
                 }
 
                 is Error -> {
-                    Text(text = "Error")
+                    ChatItemError(onTryAgain = onTryAgainClicked)
                 }
             }
         }
@@ -129,7 +134,8 @@ fun ChatsListContent(chats: List<Chat>) {
 private fun ChatsScreenLoadingPreview() {
     DroidChatTheme {
         ChatsScreenScreen(
-            chatsListUiState = Loading
+            chatsListUiState = Loading,
+            onTryAgainClicked = {}
         )
     }
 }
@@ -143,7 +149,8 @@ private fun ChatsScreenSuccessPreview(
         ChatsScreenScreen(
             chatsListUiState = Success(
                 chats = chats
-            )
+            ),
+            onTryAgainClicked = {}
         )
     }
 }
@@ -153,7 +160,8 @@ private fun ChatsScreenSuccessPreview(
 private fun ChatsScreenErrorPreview() {
     DroidChatTheme {
         ChatsScreenScreen(
-            chatsListUiState = Error
+            chatsListUiState = Error,
+            onTryAgainClicked = {}
         )
     }
 }
