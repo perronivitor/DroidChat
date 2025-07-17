@@ -32,6 +32,7 @@ import com.example.droidchat.model.Chat
 import com.example.droidchat.ui.components.AnimatedContent
 import com.example.droidchat.ui.components.ChatItem
 import com.example.droidchat.ui.components.ChatItemShimmer
+import com.example.droidchat.ui.components.GeneralEmptyList
 import com.example.droidchat.ui.components.GeneralError
 import com.example.droidchat.ui.components.PrimaryButton
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Error
@@ -111,7 +112,16 @@ fun ChatsScreenScreen(
                 }
 
                 is Success -> {
-                    ChatsListContent(chats = chatsListUiState.chats)
+                    if (chatsListUiState.chats.isNotEmpty()) {
+                        ChatsListContent(chats = chatsListUiState.chats)
+                    } else {
+                        GeneralEmptyList(
+                            message = stringResource(id = R.string.feature_chats_empty_list),
+                            resource = {
+                                AnimatedContent(resId = R.raw.animation_empty_list)
+                            }
+                        )
+                    }
                 }
 
                 is Error -> {
@@ -168,6 +178,20 @@ private fun ChatsScreenSuccessPreview(
         )
     }
 }
+
+@Preview
+@Composable
+private fun ChatsScreenSuccessEmptyPreview() {
+    DroidChatTheme {
+        ChatsScreenScreen(
+            chatsListUiState = Success(
+                chats = emptyList()
+            ),
+            onTryAgainClicked = {}
+        )
+    }
+}
+
 
 @Preview
 @Composable
