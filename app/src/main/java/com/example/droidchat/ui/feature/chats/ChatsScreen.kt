@@ -29,9 +29,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.droidchat.R
 import com.example.droidchat.model.Chat
+import com.example.droidchat.ui.components.AnimatedContent
 import com.example.droidchat.ui.components.ChatItem
-import com.example.droidchat.ui.components.ChatItemError
 import com.example.droidchat.ui.components.ChatItemShimmer
+import com.example.droidchat.ui.components.GeneralError
+import com.example.droidchat.ui.components.PrimaryButton
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Error
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Loading
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Success
@@ -113,7 +115,19 @@ fun ChatsScreenScreen(
                 }
 
                 is Error -> {
-                    ChatItemError(onTryAgain = onTryAgainClicked)
+                    GeneralError(
+                        title = stringResource(id = R.string.common_generic_error_title),
+                        message = stringResource(id = R.string.common_generic_error_message),
+                        resource = {
+                            AnimatedContent()
+                        },
+                        action = {
+                            PrimaryButton(
+                                text = stringResource(id = R.string.common_try_again),
+                                onClick = onTryAgainClicked
+                            )
+                        }
+                    )
                 }
             }
         }
