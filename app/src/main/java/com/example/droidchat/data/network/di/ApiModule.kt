@@ -1,5 +1,6 @@
 package com.example.droidchat.data.network.di
 
+import com.example.droidchat.data.manager.token.TokenManager
 import com.example.droidchat.model.NetworkException
 import dagger.Module
 import dagger.Provides
@@ -9,6 +10,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -20,6 +24,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 
 @Module
@@ -28,10 +33,13 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(): HttpClient {
+    fun provideHttpClient(
+        tokenManager: TokenManager,
+    ): HttpClient {
+
         return HttpClient(CIO) {
             expectSuccess = true
-            
+
             install(Logging) {
                 logger = Logger.SIMPLE
                 level = LogLevel.ALL
@@ -54,11 +62,22 @@ object ApiModule {
 
             HttpResponseValidator {
                 handleResponseExceptionWithRequest { cause, _ ->
-                    throw if(cause is ClientRequestException) {
-                       val errorMessage = cause.response.bodyAsText()
+                    throw if (cause is ClientRequestException) {
+                        val errorMessage = cause.response.bodyAsText()
                         NetworkException.ApiException(errorMessage, cause.response.status.value)
                     } else {
-                       NetworkException.UnknownNetworkException(cause)
+                        NetworkException.UnknownNetworkException(cause)
+                    }
+                }
+            }
+
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        val accessToken = tokenManager.accessToken.firstOrNull()
+                        accessToken?.let {
+                            BearerTokens(it, "")
+                        }
                     }
                 }
             }

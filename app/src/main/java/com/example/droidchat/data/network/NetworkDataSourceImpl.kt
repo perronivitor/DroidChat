@@ -12,7 +12,6 @@ import io.ktor.client.call.body
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
@@ -48,18 +47,14 @@ class NetworkDataSourceImpl @Inject constructor(
         ).body()
     }
 
-    override suspend fun authenticate(token: String): UserResponse {
-        return httpClient.get("authenticate") {
-            header(HttpHeaders.Authorization, "Bearer $token")
-        }.body()
+    override suspend fun authenticate(): UserResponse {
+        return httpClient.get("authenticate").body()
     }
 
     override suspend fun getChats(
-        token: String,
         paginationParams: PaginationParams,
     ): PaginatedChatResponse {
         return httpClient.get("conversation") {
-            header(HttpHeaders.Authorization, "Bearer $token")
             url {
                 parameters.append("offset", paginationParams.offset)
                 parameters.append("limit", paginationParams.limit)

@@ -14,6 +14,6 @@ interface AuthRepository {
 
     suspend fun uploadProfilePicture(filePath: String): Result<Image>
 
-    suspend fun authenticate(token: String): Result<Unit>
+    suspend fun authenticate(): Result<Unit>
 
 }

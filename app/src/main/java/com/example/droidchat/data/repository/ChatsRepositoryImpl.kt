@@ -14,7 +14,6 @@ import kotlinx.coroutines.withContext
 
 class ChatsRepositoryImpl @Inject constructor(
     private val networkDataSource: NetworkDataSource,
-    private val tokenManager: TokenManager,
     private val selfUserManager: SelfUserManager,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ChatsRepository {
@@ -24,9 +23,7 @@ class ChatsRepositoryImpl @Inject constructor(
     ): Result<List<Chat>> {
         return withContext(ioDispatcher) {
             runCatching {
-                val token = tokenManager.accessToken.firstOrNull().orEmpty()
                 val paginatedChatResponse = networkDataSource.getChats(
-                    token = token,
                     paginationParams = PaginationParams(
                         offset = offset.toString(),
                         limit = limit.toString()
