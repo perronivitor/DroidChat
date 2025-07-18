@@ -4,6 +4,8 @@ import com.example.droidchat.data.repository.AuthRepository
 import com.example.droidchat.data.repository.AuthRepositoryImpl
 import com.example.droidchat.data.repository.ChatsRepository
 import com.example.droidchat.data.repository.ChatsRepositoryImpl
+import com.example.droidchat.data.repository.UserRepository
+import com.example.droidchat.data.repository.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,4 +20,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindChatsRepository(repository: ChatsRepositoryImpl): ChatsRepository
+
+    @Binds
+    fun bindUserRepository(repository: UserRepositoryImpl): UserRepository
 }
