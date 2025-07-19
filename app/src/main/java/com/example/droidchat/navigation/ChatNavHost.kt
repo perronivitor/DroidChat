@@ -10,11 +10,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.example.droidchat.navigation.extension.slideInTo
 import com.example.droidchat.navigation.extension.slideOutTo
-import com.example.droidchat.ui.feature.chats.ChatsScreenRoute
+import com.example.droidchat.ui.feature.chats.ChatsRoute
 import com.example.droidchat.ui.feature.chats.navigateToChats
 import com.example.droidchat.ui.feature.signin.SignInRoute
 import com.example.droidchat.ui.feature.signup.SignUpRoute
 import com.example.droidchat.ui.feature.splash.SplashRoute
+import com.example.droidchat.ui.feature.users.UsersRoute
 
 @Composable
 fun ChatNavHost(
@@ -97,7 +98,11 @@ fun ChatNavHost(
         }
 
         composable<Route.ChatsRoute> {
-            ChatsScreenRoute()
+            ChatsRoute()
+        }
+
+        composable<Route.UsersRoute> {
+            UsersRoute()
         }
     }
 }

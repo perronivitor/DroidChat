@@ -43,7 +43,7 @@ import com.example.droidchat.ui.theme.DroidChatTheme
 import com.example.droidchat.ui.theme.Grey1
 
 @Composable
-fun ChatsScreenRoute(
+fun ChatsRoute(
     viewModel: ChatsViewModel = hiltViewModel(),
 ) {
     val chatsListUiState = viewModel.chatsListUiState.collectAsStateWithLifecycle()

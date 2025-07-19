@@ -8,9 +8,11 @@ import com.example.droidchat.model.User
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
+private const val LIMIT = 10
+
 interface UserRepository {
 
-    fun getUsers(limit: Int): Flow<PagingData<User>>
+    fun getUsers(limit: Int = LIMIT): Flow<PagingData<User>>
 }
 
 class UserRepositoryImpl @Inject constructor(
