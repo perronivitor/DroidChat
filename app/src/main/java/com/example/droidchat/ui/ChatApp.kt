@@ -7,19 +7,23 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.example.droidchat.navigation.ChatNavHost
+import com.example.droidchat.navigation.DroidChatNavigationState
 import com.example.droidchat.navigation.rememberDroidChatNavigationState
 import com.example.droidchat.ui.components.BottomNavigationMenu
 import com.example.droidchat.ui.theme.Grey1
 
 @Composable
-fun ChatApp() {
-    val navigationState = rememberDroidChatNavigationState()
+fun ChatApp(navigationState: DroidChatNavigationState = rememberDroidChatNavigationState()) {
+    val topLevelDestination = remember(navigationState.topLevelDestination) {
+        navigationState.topLevelDestination.toSet()
+    }
 
     Scaffold(
         bottomBar = {
-            if (navigationState.currentTopLevelDestination != null) {
+            if (navigationState.currentTopLevelDestination in topLevelDestination) {
                 BottomNavigationMenu(navigationState = navigationState)
             }
         },
