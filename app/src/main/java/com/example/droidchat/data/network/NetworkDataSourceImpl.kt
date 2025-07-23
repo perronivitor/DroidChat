@@ -56,7 +56,7 @@ class NetworkDataSourceImpl @Inject constructor(
     override suspend fun getChats(
         paginationParams: PaginationParams,
     ): PaginatedChatResponse {
-        return httpClient.get("conversation") {
+        return httpClient.get("conversations") {
             url {
                 appendPaginationParams(paginationParams)
             }

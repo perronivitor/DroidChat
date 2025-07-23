@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PaginatedChatResponse(
-    @SerialName("data") val chats: List<ChatResponse>,
+    @SerialName("conversations") val chats: List<ChatResponse>,
     val hasMore: Boolean,
     val total: Int,
 )

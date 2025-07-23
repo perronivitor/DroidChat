@@ -48,6 +48,4 @@ class ChatsViewModel @Inject constructor(
         data class Success(val chats: List<Chat>) : ChatsListUiState
         data object Error : ChatsListUiState
     }
-
-
 }
