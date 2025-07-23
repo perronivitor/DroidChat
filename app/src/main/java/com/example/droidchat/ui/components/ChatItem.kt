@@ -3,7 +3,6 @@ package com.example.droidchat.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -20,8 +18,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility.Companion.Gone
 import androidx.constraintlayout.compose.Visibility.Companion.Visible
-import coil.compose.AsyncImage
-import com.example.droidchat.R
 import com.example.droidchat.model.Chat
 import com.example.droidchat.ui.preview.ChatPreviewParameterProvider
 import com.example.droidchat.ui.theme.DroidChatTheme
@@ -48,20 +44,15 @@ fun ChatItem(
             unreadCountRef,
         ) = createRefs()
 
-        AsyncImage(
-            model = receiver.profilePictureUrl,
+        RoundedAvatar(
+            imageUri = receiver.profilePictureUrl,
             contentDescription = null,
             modifier = Modifier
-                .clip(CircleShape)
-                .size(60.dp)
                 .constrainAs(avatarRef) {
                     top.linkTo(anchor = parent.top, margin = 16.dp)
                     start.linkTo(anchor = parent.start)
                     bottom.linkTo(anchor = parent.bottom, margin = 16.dp)
                 },
-            placeholder = painterResource(R.drawable.no_profile_image),
-            error = painterResource(R.drawable.no_profile_image),
-            fallback = painterResource(R.drawable.no_profile_image)
         )
 
         Text(
