@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
+import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -30,6 +31,7 @@ import com.example.droidchat.model.fake.user4
 import com.example.droidchat.ui.components.AnimatedContent
 import com.example.droidchat.ui.components.ChatScaffold
 import com.example.droidchat.ui.components.ChatTopAppBar
+import com.example.droidchat.ui.components.GeneralEmptyList
 import com.example.droidchat.ui.components.GeneralError
 import com.example.droidchat.ui.components.PrimaryButton
 import com.example.droidchat.ui.components.UserItem
@@ -71,23 +73,32 @@ fun UsersScreen(
             }
 
             is LoadState.NotLoading -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surface)
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(pagingUsers.itemCount) { index ->
-                        pagingUsers[index]?.let { user ->
-                            UserItem(user = user)
+                if (pagingUsers.itemCount == 0) {
+                    GeneralEmptyList(
+                        message = stringResource(id = R.string.feature_users_empty_list),
+                        resource = {
+                            AnimatedContent(resId = R.raw.animation_empty_list)
+                        }
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surface)
+                            .fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(pagingUsers.itemCount) { index ->
+                            pagingUsers[index]?.let { user ->
+                                UserItem(user = user)
 
-                            if (index < pagingUsers.itemCount - 1) {
-                                HorizontalDivider(
-                                    modifier = Modifier
-                                        .padding(16.dp),
-                                    color = Grey1
-                                )
+                                if (index < pagingUsers.itemCount - 1) {
+                                    HorizontalDivider(
+                                        modifier = Modifier
+                                            .padding(16.dp),
+                                        color = Grey1
+                                    )
+                                }
                             }
                         }
                     }
@@ -125,6 +136,11 @@ private fun UsersScreenPreview() {
                     user2,
                     user3,
                     user4
+                ),
+                sourceLoadStates = LoadStates(
+                    refresh = LoadState.NotLoading(false),
+                    prepend = LoadState.NotLoading(false),
+                    append = LoadState.NotLoading(false)
                 )
             )
         )
