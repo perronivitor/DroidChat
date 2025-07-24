@@ -2,8 +2,12 @@ package com.example.droidchat.ui.feature.users
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -101,6 +105,42 @@ fun UsersScreen(
                                 }
                             }
                         }
+
+                        if (pagingUsers.loadState.append is LoadState.Loading) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+
+                        if (pagingUsers.loadState.append is LoadState.Error) {
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.feature_users_error_loading_more),
+                                        modifier = Modifier.padding(8.dp),
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+
+                                    PrimaryButton(
+                                        text = stringResource(id = R.string.common_try_again),
+                                        onClick = pagingUsers::retry
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -115,7 +155,10 @@ fun UsersScreen(
                     action = {
                         PrimaryButton(
                             text = stringResource(id = R.string.common_try_again),
-                            onClick = pagingUsers::refresh
+                            onClick = pagingUsers::retry,
+                            modifier = Modifier
+                                .padding(horizontal = 30.dp)
+                                .height(46.dp)
                         )
                     }
                 )
