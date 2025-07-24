@@ -1,6 +1,5 @@
 package com.example.droidchat.ui.components
 
-import android.R.attr.navigationIcon
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api

@@ -3,7 +3,8 @@ package com.example.droidchat.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
+import com.example.droidchat.data.network.NetworkDataSource
+import com.example.droidchat.data.pagingsource.UserPagingSource
 import com.example.droidchat.model.User
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,7 @@ interface UserRepository {
 }
 
 class UserRepositoryImpl @Inject constructor(
-    private val userPagingSource: PagingSource<Int, User>,
+    private val networkDataSource: NetworkDataSource,
 ) : UserRepository {
     override fun getUsers(limit: Int): Flow<PagingData<User>> {
         return Pager(
@@ -24,7 +25,11 @@ class UserRepositoryImpl @Inject constructor(
                 pageSize = limit,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { userPagingSource }
+            pagingSourceFactory = {
+                UserPagingSource(
+                    networkDataSource = networkDataSource
+                )
+            }
         ).flow
     }
 }
