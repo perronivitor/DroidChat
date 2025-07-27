@@ -2,6 +2,7 @@ package com.example.droidchat.data.database
 
 import androidx.paging.PagingSource
 import com.example.droidchat.data.database.entity.MessageEntity
+import com.example.droidchat.data.database.entity.MessageRemoteKeyEntity
 import javax.inject.Inject
 
 class DataBaseDataSourceImpl @Inject constructor(
@@ -9,6 +10,7 @@ class DataBaseDataSourceImpl @Inject constructor(
 ) : DataBaseDataSource {
 
     private val messageDao = database.messageDao()
+    private val messageRemoteKeyDao = database.messageRemoteKeyDao()
 
     override fun getPagedMessages(receiverId: Int): PagingSource<Int, MessageEntity> {
         return messageDao.getPagedMessages(receiverId)
@@ -22,4 +24,15 @@ class DataBaseDataSourceImpl @Inject constructor(
         messageDao.deleteMessages(receiverId)
     }
 
+    override suspend fun getMessageRemoteKey(receiverId: Int): MessageRemoteKeyEntity? {
+        return messageRemoteKeyDao.getRemoteKey(receiverId)
+    }
+
+    override suspend fun insertMessageRemoteKey(remoteKey: MessageRemoteKeyEntity) {
+        messageRemoteKeyDao.insertRemoteKey(remoteKey)
+    }
+
+    override suspend fun clearMessageRemoteKey(receiverId: Int) {
+        messageRemoteKeyDao.clearMessageRemoteKey(receiverId)
+    }
 }
