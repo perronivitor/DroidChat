@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.example.droidchat.navigation.extension.slideInTo
 import com.example.droidchat.navigation.extension.slideOutTo
+import com.example.droidchat.ui.feature.chatdetail.ChatDetailRoute
 import com.example.droidchat.ui.feature.chats.ChatsRoute
 import com.example.droidchat.ui.feature.chats.navigateToChats
 import com.example.droidchat.ui.feature.signin.SignInRoute
@@ -102,7 +103,21 @@ fun ChatNavHost(
         }
 
         composable<Route.UsersRoute> {
-            UsersRoute()
+            UsersRoute(
+                navigateToChatDetail = { userId ->
+                    navController.navigate(
+                        route = Route.ChatDetailRoute(userId),
+                    )
+                }
+            )
+        }
+
+        composable<Route.ChatDetailRoute> {
+            ChatDetailRoute(
+                navigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

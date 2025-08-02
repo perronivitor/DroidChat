@@ -1,6 +1,7 @@
 package com.example.droidchat.ui.feature.users
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,11 +47,13 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun UsersRoute(
     viewModel: UsersViewModel = hiltViewModel(),
+    navigateToChatDetail: (userId: Int) -> Unit,
 ) {
     val pagingUsers = viewModel.usersFlow.collectAsLazyPagingItems()
 
     UsersScreen(
-        pagingUsers = pagingUsers
+        pagingUsers = pagingUsers,
+        onUserClicked = navigateToChatDetail
     )
 }
 
@@ -58,6 +61,7 @@ fun UsersRoute(
 @Composable
 fun UsersScreen(
     pagingUsers: LazyPagingItems<User>,
+    onUserClicked: (userId: Int) -> Unit,
 ) {
     ChatScaffold(
         topBar = {
@@ -94,7 +98,13 @@ fun UsersScreen(
                     ) {
                         items(pagingUsers.itemCount) { index ->
                             pagingUsers[index]?.let { user ->
-                                UserItem(user = user)
+                                UserItem(
+                                    user = user,
+                                    modifier = Modifier
+                                        .clickable {
+                                            onUserClicked(user.id)
+                                        }
+                                )
 
                                 if (index < pagingUsers.itemCount - 1) {
                                     HorizontalDivider(
@@ -188,7 +198,8 @@ private fun UsersScreenPreview() {
             )
         )
         UsersScreen(
-            pagingUsers = usersFlow.collectAsLazyPagingItems()
+            pagingUsers = usersFlow.collectAsLazyPagingItems(),
+            onUserClicked = {}
         )
     }
 }
