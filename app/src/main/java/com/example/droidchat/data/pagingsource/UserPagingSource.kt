@@ -23,7 +23,7 @@ class UserPagingSource @Inject constructor(
                 )
             )
 
-            val users = response.asDomainModel()
+            val users = response.users.map { user -> user.asDomainModel() }
 
             return LoadResult.Page(
                 data = users,
