@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
@@ -38,6 +40,7 @@ import com.example.droidchat.model.fake.chatMessage2
 import com.example.droidchat.model.fake.chatMessage3
 import com.example.droidchat.model.fake.chatMessage4
 import com.example.droidchat.model.fake.chatMessage5
+import com.example.droidchat.model.fake.user2
 import com.example.droidchat.ui.components.AnimatedContent
 import com.example.droidchat.ui.components.ChatMessageBubble
 import com.example.droidchat.ui.components.ChatMessageTextField
@@ -47,6 +50,7 @@ import com.example.droidchat.ui.components.GeneralEmptyList
 import com.example.droidchat.ui.components.GeneralError
 import com.example.droidchat.ui.components.PrimaryButton
 import com.example.droidchat.ui.components.RoundedAvatar
+import com.example.droidchat.ui.feature.chatdetail.ChatDetailViewModel.GetUserUiState
 import com.example.droidchat.ui.theme.DroidChatTheme
 import kotlinx.coroutines.flow.flowOf
 
@@ -57,6 +61,7 @@ fun ChatDetailRoute(
 ) {
     val pagingChatMessages = viewModel.pagingChatMessages.collectAsLazyPagingItems()
     val messageText = viewModel.messageText
+    val getUserUiState by viewModel.getUserUiState.collectAsStateWithLifecycle()
 
     ChatDetailScreen(
         pagingChatMessages = pagingChatMessages,
@@ -64,6 +69,7 @@ fun ChatDetailRoute(
         onNavigationIconClicked = navigateBack,
         onMessageChange = viewModel::onMessageChange,
         onSendClicked = viewModel::onSendMessageClicked,
+        getUserUiState = getUserUiState
     )
 }
 
@@ -72,6 +78,7 @@ fun ChatDetailRoute(
 fun ChatDetailScreen(
     pagingChatMessages: LazyPagingItems<ChatMessage>,
     messageText: String,
+    getUserUiState: GetUserUiState,
     onNavigationIconClicked: () -> Unit,
     onMessageChange: (String) -> Unit,
     onSendClicked: () -> Unit,
@@ -84,13 +91,13 @@ fun ChatDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         when (getUserUiState) {
-                            ChatDetailViewModel.GetUserUiState.Loading -> {
+                            GetUserUiState.Loading -> {
                                 CircularProgressIndicator(
                                     color = MaterialTheme.colorScheme.inverseOnSurface,
                                 )
                             }
 
-                            is ChatDetailViewModel.GetUserUiState.Success -> {
+                            is GetUserUiState.Success -> {
                                 RoundedAvatar(
                                     imageUri = getUserUiState.user.profilePictureUrl,
                                     contentDescription = null,
@@ -109,7 +116,7 @@ fun ChatDetailScreen(
                                         style = MaterialTheme.typography.titleMedium,
                                     )
 
-                                    if (isUserOnline) {
+                                    if (true) {
                                         Text(
                                             text = stringResource(R.string.feature_chat_detail_online_status),
                                             color = MaterialTheme.colorScheme.inverseOnSurface,
@@ -119,7 +126,7 @@ fun ChatDetailScreen(
                                 }
                             }
 
-                            is ChatDetailViewModel.GetUserUiState.Error -> {
+                            is GetUserUiState.Error -> {
                             }
                         }
                     }
@@ -286,6 +293,7 @@ private fun ChatDetailScreenPreview() {
         ChatDetailScreen(
             pagingChatMessages = pagingChatMessages,
             messageText = "",
+            getUserUiState = GetUserUiState.Success(user2),
             onNavigationIconClicked = {},
             onMessageChange = {},
             onSendClicked = {},

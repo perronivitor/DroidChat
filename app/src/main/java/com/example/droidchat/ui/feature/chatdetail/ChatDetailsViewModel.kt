@@ -9,25 +9,43 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.paging.cachedIn
 import com.example.droidchat.data.repository.ChatsRepository
+import com.example.droidchat.data.repository.UserRepository
+import com.example.droidchat.model.User
 import com.example.droidchat.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ChatDetailViewModel @Inject constructor(
     private val chatRepository: ChatsRepository,
+    private val userRepository: UserRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val chatDetailRoute = savedStateHandle.toRoute<Route.ChatDetailRoute>()
 
     var sendMessageFlow = MutableSharedFlow<Unit>()
+
+    private val _getUserUiSate = MutableStateFlow<GetUserUiState>(GetUserUiState.Loading)
+    val getUserUiState = _getUserUiSate
+        .onStart {
+            getUserDetail()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = GetUserUiState.Loading
+        )
 
     var messageText by mutableStateOf("")
         private set
@@ -59,5 +77,32 @@ class ChatDetailViewModel @Inject constructor(
             receiverId = chatDetailRoute.userId,
             message = messageText
         )
+    }
+
+    private fun getUserDetail() {
+        viewModelScope.launch {
+            _getUserUiSate.update {
+                GetUserUiState.Loading
+            }
+
+            userRepository.getUser(chatDetailRoute.userId).fold(
+                onSuccess = { user ->
+                    _getUserUiSate.update {
+                        GetUserUiState.Success(user = user)
+                    }
+                },
+                onFailure = { error ->
+                    _getUserUiSate.update {
+                        GetUserUiState.Error(error.message ?: "Unknown error")
+                    }
+                }
+            )
+        }
+    }
+
+    sealed interface GetUserUiState {
+        data object Loading : GetUserUiState
+        data class Success(val user: User) : GetUserUiState
+        data class Error(val message: String) : GetUserUiState
     }
 }

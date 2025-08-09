@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "messages_remote_keys")
+@Entity(tableName = "message_remote_keys")
 data class MessageRemoteKeyEntity(
-    @PrimaryKey()
+    @PrimaryKey
     @ColumnInfo(name = "receiver_id")
     val receiverId: Int,
     val nextOffset: Int?
