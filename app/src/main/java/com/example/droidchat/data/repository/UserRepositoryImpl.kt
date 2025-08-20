@@ -20,7 +20,6 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getUser(userId: Int): Result<User> {
         return safeCallResult(dispatcher) {
-            throw Throwable()
             val userResponse = networkDataSource.getUser(userId)
             userResponse.asDomainModel()
         }
