@@ -120,7 +120,5 @@ class ChatsRepositoryImpl @Inject constructor(
     override suspend fun disconnectWebSocket() {
         chatWebSocketService.disconnect()
     }
-
-
 }
 
