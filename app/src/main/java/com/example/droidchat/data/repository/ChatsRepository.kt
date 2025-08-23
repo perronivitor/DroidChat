@@ -1,6 +1,7 @@
 package com.example.droidchat.data.repository
 
 import androidx.paging.PagingData
+import com.example.droidchat.data.network.websocket.SocketMessageResult
 import com.example.droidchat.model.Chat
 import com.example.droidchat.model.ChatMessage
 import kotlinx.coroutines.flow.Flow
@@ -10,6 +11,11 @@ interface ChatsRepository {
 
     fun getPagedMessages(receiverId: Int): Flow<PagingData<ChatMessage>>
 
-    suspend fun sendMessage(receiverId: Int, message: String)
+    suspend fun sendMessage(receiverId: Int, message: String): Result<Unit>
 
+    suspend fun connectWebSocket(): Result<Unit>
+
+    fun observeSocketMessageResultFlow(): Flow<SocketMessageResult>
+
+    suspend fun disconnectWebSocket()
 }

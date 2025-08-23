@@ -13,15 +13,19 @@ import com.example.droidchat.data.manager.selfuser.SelfUserManager
 import com.example.droidchat.data.mapper.asDomainModel
 import com.example.droidchat.data.network.NetworkDataSource
 import com.example.droidchat.data.network.model.PaginationParams
+import com.example.droidchat.data.network.websocket.ChatWebSocketService
+import com.example.droidchat.data.network.websocket.SocketMessageResult
 import com.example.droidchat.data.pagingsource.MessageRemoteMediator
+import com.example.droidchat.data.util.safeCallResult
 import com.example.droidchat.model.Chat
 import com.example.droidchat.model.ChatMessage
-import java.time.Instant
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class ChatsRepositoryImpl @Inject constructor(
@@ -29,8 +33,12 @@ class ChatsRepositoryImpl @Inject constructor(
     private val databaseDataSource: DataBaseDataSource,
     private val database: DroidChatDatabase,
     private val selfUserManager: SelfUserManager,
+    private val chatWebSocketService: ChatWebSocketService,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ChatsRepository {
+
+    val selfUser = runBlocking { selfUserManager.selfUser.firstOrNull() }
+
     override suspend fun getChats(
         offset: Int,
         limit: Int,
@@ -68,26 +76,51 @@ class ChatsRepositoryImpl @Inject constructor(
             }
         ).flow.map {
             it.map { messageEntity ->
-                val selfUser = selfUserManager.selfUser.firstOrNull()
                 messageEntity.asDomainModel(selfUserId = selfUser?.id)
             }
         }
     }
 
-    override suspend fun sendMessage(receiverId: Int, message: String) {
-        val selfUser = selfUserManager.selfUser.firstOrNull()
-
-        val messageEntity = MessageEntity(
-            id = null,
-            isUnread = false,
-            senderId = selfUser?.id ?: 0,
-            receiverId = receiverId,
-            text = message,
-            timestamp = Instant.now().toEpochMilli()
-        )
-
-        databaseDataSource.insertMessages(listOf(messageEntity))
-
+    override suspend fun sendMessage(receiverId: Int, message: String): Result<Unit> {
+        return safeCallResult(ioDispatcher) {
+            chatWebSocketService.sendMessage(receiverId, message)
+        }
     }
+
+    override suspend fun connectWebSocket(): Result<Unit> {
+        return safeCallResult(ioDispatcher) {
+            chatWebSocketService.connect(userId = selfUser?.id ?: 0)
+        }
+    }
+
+    override fun observeSocketMessageResultFlow(): Flow<SocketMessageResult> {
+        return chatWebSocketService.observerSocketMessageResultFlow()
+            .onEach { socketMessageResult ->
+                when (socketMessageResult) {
+                    is SocketMessageResult.MessageReceived -> {
+                        val messageResponse = socketMessageResult.message
+                        val messageEntity = MessageEntity(
+                            id = messageResponse.id,
+                            isUnread = messageResponse.isUnread,
+                            senderId = selfUser?.id ?: 0,
+                            receiverId = messageResponse.receiverId,
+                            text = messageResponse.text,
+                            timestamp = messageResponse.timestamp
+                        )
+
+                        databaseDataSource.insertMessages(listOf(messageEntity))
+                    }
+
+                    else -> {}
+                }
+
+            }
+    }
+
+    override suspend fun disconnectWebSocket() {
+        chatWebSocketService.disconnect()
+    }
+
+
 }
 
