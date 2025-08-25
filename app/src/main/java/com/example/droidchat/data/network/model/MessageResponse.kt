@@ -17,4 +17,5 @@ data class MessageResponse(
     val senderId: Int,
     val text: String,
     val timestamp: Long,
+    val messageId :String
 )

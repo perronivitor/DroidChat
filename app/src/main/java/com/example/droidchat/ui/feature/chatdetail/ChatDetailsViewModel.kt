@@ -97,10 +97,19 @@ class ChatDetailViewModel @Inject constructor(
     }
 
     private suspend fun sendMessage() {
-        chatRepository.sendMessage(
-            receiverId = chatDetailRoute.userId,
-            message = messageText
-        )
+        if (messageText.isNotBlank()) {
+            chatRepository.sendMessage(
+                receiverId = chatDetailRoute.userId,
+                message = messageText
+            ).fold(
+                onSuccess = {
+                    messageText = ""
+                },
+                onFailure = { error ->
+                    //Handle error
+                }
+            )
+        }
     }
 
     private fun getUserDetail() {

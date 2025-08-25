@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ActiveUserIdsResponse(
-    val activeUserId: List<Int>,
+    val activeUserIds: List<Int>,
 )

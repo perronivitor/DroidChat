@@ -1,15 +1,29 @@
 package com.example.droidchat.data.network.websocket
 
 import android.util.Log
+import com.example.droidchat.data.network.model.MessageResponse
+import com.example.droidchat.data.network.model.MessageSocketDataRequest
+import com.example.droidchat.data.network.model.MessageSocketRequest
+import com.example.droidchat.data.network.model.WebSocketData
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
+import io.ktor.client.plugins.websocket.sendSerialized
 import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.client.request.url
+import io.ktor.websocket.Frame
 import io.ktor.websocket.close
+import io.ktor.websocket.readText
+import java.time.Instant
+import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
+import kotlinx.serialization.json.Json
 
 class ChatWebSocketServiceImpl @Inject constructor(
     private val client: HttpClient,
@@ -45,7 +59,33 @@ class ChatWebSocketServiceImpl @Inject constructor(
     }
 
     override fun observerSocketMessageResultFlow(): Flow<SocketMessageResult> {
-        return flowOf(SocketMessageResult.NotHandledYet)
+        if (socketSession == null) {
+            Log.w(tag, "WebSocket session is null")
+
+            return flowOf(
+                SocketMessageResult.ConnectionError(
+                    Throwable("WebSocket session is null")
+                )
+            )
+        }
+
+        return socketSession!!
+            .incoming
+            .receiveAsFlow()
+            .filterIsInstance(Frame.Text::class)
+            .map { frameText ->
+                val text = frameText.readText()
+                val webSocketData = Json.decodeFromString<WebSocketData>(text)
+
+                Log.d(tag, "Received message: $webSocketData")
+                when (val data = webSocketData.data) {
+                    is MessageResponse -> SocketMessageResult.MessageReceived(data)
+                    else -> SocketMessageResult.NotHandledYet
+                }
+            }.catch {
+                Log.e(tag, "WebSocket error: ${it.message}", it)
+                flowOf(SocketMessageResult.ConnectionError(it))
+            }
     }
 
     override suspend fun sendMessage(receiverId: Int, message: String) {
@@ -54,7 +94,23 @@ class ChatWebSocketServiceImpl @Inject constructor(
             throw IllegalStateException("WebSocket session is null ou not active")
         }
 
-        //send message
+        try {
+            Log.d(tag, "Sending message: $message")
+            val messageRequest = MessageSocketDataRequest(
+                type = "messageRequest",
+                data = MessageSocketRequest(
+                    messageId = UUID.randomUUID().toString(),
+                    receiverId = receiverId,
+                    text = message,
+                    timestamp = Instant.now().toEpochMilli()
+                )
+            )
+
+            socketSession?.sendSerialized(messageRequest)
+        } catch (e: Exception) {
+            Log.d(tag, "Failed to send message: ${e.message}", e)
+            throw e
+        }
     }
 
     override suspend fun disconnect() {

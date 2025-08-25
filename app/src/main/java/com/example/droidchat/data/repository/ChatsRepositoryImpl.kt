@@ -98,15 +98,16 @@ class ChatsRepositoryImpl @Inject constructor(
             .onEach { socketMessageResult ->
                 when (socketMessageResult) {
                     is SocketMessageResult.MessageReceived -> {
-                        val messageResponse = socketMessageResult.message
-                        val messageEntity = MessageEntity(
-                            id = messageResponse.id,
-                            isUnread = messageResponse.isUnread,
-                            senderId = selfUser?.id ?: 0,
-                            receiverId = messageResponse.receiverId,
-                            text = messageResponse.text,
-                            timestamp = messageResponse.timestamp
-                        )
+                        val messageEntity = socketMessageResult.message.run {
+                            MessageEntity(
+                                id = id,
+                                isUnread = isUnread,
+                                senderId = senderId,
+                                receiverId = receiverId,
+                                text = text,
+                                timestamp = timestamp
+                            )
+                        }
 
                         databaseDataSource.insertMessages(listOf(messageEntity))
                     }
