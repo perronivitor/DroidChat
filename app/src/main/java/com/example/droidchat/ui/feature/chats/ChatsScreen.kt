@@ -39,14 +39,16 @@ import com.example.droidchat.ui.theme.Grey1
 @Composable
 fun ChatsRoute(
     viewModel: ChatsViewModel = hiltViewModel(),
+    navigateToChatDetails : (Chat) -> Unit
 ) {
     val chatsListUiState = viewModel.chatsListUiState.collectAsStateWithLifecycle()
 
     ChatsScreenScreen(
         chatsListUiState = chatsListUiState.value,
         onTryAgainClicked = {
-            viewModel.getChats()
-        }
+            viewModel.getChats(isRefreshing = true)
+        },
+        onChatClicked = navigateToChatDetails
     )
 }
 
@@ -55,6 +57,7 @@ fun ChatsRoute(
 fun ChatsScreenScreen(
     chatsListUiState: ChatsViewModel.ChatsListUiState,
     onTryAgainClicked: () -> Unit = {},
+    onChatClicked: (Chat) -> Unit,
 ) {
     ChatScaffold(
         topBar = {
@@ -90,7 +93,10 @@ fun ChatsScreenScreen(
 
             is Success -> {
                 if (chatsListUiState.chats.isNotEmpty()) {
-                    ChatsListContent(chats = chatsListUiState.chats)
+                    ChatsListContent(
+                        chats = chatsListUiState.chats,
+                        onChatClicked = onChatClicked
+                    )
                 } else {
                     GeneralEmptyList(
                         message = stringResource(id = R.string.feature_chats_empty_list),
@@ -121,10 +127,16 @@ fun ChatsScreenScreen(
 }
 
 @Composable
-fun ChatsListContent(chats: List<Chat>) {
+fun ChatsListContent(
+    chats: List<Chat>,
+    onChatClicked: (Chat) -> Unit,
+) {
     LazyColumn(contentPadding = PaddingValues(horizontal = 16.dp)) {
         itemsIndexed(chats) { index, chat ->
-            ChatItem(chat = chat)
+            ChatItem(
+                chat = chat,
+                onClick = onChatClicked
+            )
         }
     }
 }
@@ -135,7 +147,8 @@ private fun ChatsScreenLoadingPreview() {
     DroidChatTheme {
         ChatsScreenScreen(
             chatsListUiState = Loading,
-            onTryAgainClicked = {}
+            onTryAgainClicked = {},
+            onChatClicked = {}
         )
     }
 }
@@ -150,7 +163,8 @@ private fun ChatsScreenSuccessPreview(
             chatsListUiState = Success(
                 chats = chats
             ),
-            onTryAgainClicked = {}
+            onTryAgainClicked = {},
+            onChatClicked = {}
         )
     }
 }
@@ -163,7 +177,8 @@ private fun ChatsScreenSuccessEmptyPreview() {
             chatsListUiState = Success(
                 chats = emptyList()
             ),
-            onTryAgainClicked = {}
+            onTryAgainClicked = {},
+            onChatClicked = {}
         )
     }
 }
@@ -175,7 +190,8 @@ private fun ChatsScreenErrorPreview() {
     DroidChatTheme {
         ChatsScreenScreen(
             chatsListUiState = Error,
-            onTryAgainClicked = {}
+            onTryAgainClicked = {},
+            onChatClicked = {}
         )
     }
 }
