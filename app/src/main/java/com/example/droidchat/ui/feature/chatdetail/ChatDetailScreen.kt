@@ -65,10 +65,10 @@ fun ChatDetailRoute(
     viewModel: ChatDetailViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
 ) {
+    val isUserOnline by viewModel.isUserOnline.collectAsStateWithLifecycle()
     val pagingChatMessages = viewModel.pagingChatMessages.collectAsLazyPagingItems()
     val messageText = viewModel.messageText
     val getUserUiState by viewModel.getUserUiState.collectAsStateWithLifecycle()
-
     var showErrorDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(pagingChatMessages.loadState.refresh) {
@@ -105,6 +105,7 @@ fun ChatDetailRoute(
     }
 
     ChatDetailScreen(
+        isUserOnline = isUserOnline,
         pagingChatMessages = pagingChatMessages,
         messageText = messageText,
         onNavigationIconClicked = navigateBack,
@@ -117,12 +118,13 @@ fun ChatDetailRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatDetailScreen(
+    isUserOnline: Boolean,
     pagingChatMessages: LazyPagingItems<ChatMessage>,
     messageText: String,
     getUserUiState: GetUserUiState,
     onNavigationIconClicked: () -> Unit,
     onMessageChange: (String) -> Unit,
-    onSendClicked: () -> Unit,
+    onSendClicked: () -> Unit
 ) {
     ChatScaffold(
         topBar = {
@@ -157,7 +159,7 @@ fun ChatDetailScreen(
                                         style = MaterialTheme.typography.titleMedium,
                                     )
 
-                                    if (true) {
+                                    if (isUserOnline) {
                                         Text(
                                             text = stringResource(R.string.feature_chat_detail_online_status),
                                             color = MaterialTheme.colorScheme.inverseOnSurface,
@@ -338,6 +340,7 @@ private fun ChatDetailScreenPreview() {
             onNavigationIconClicked = {},
             onMessageChange = {},
             onSendClicked = {},
+            isUserOnline = true
         )
     }
 }

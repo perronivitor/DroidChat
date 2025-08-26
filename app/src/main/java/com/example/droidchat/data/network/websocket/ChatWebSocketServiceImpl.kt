@@ -1,6 +1,7 @@
 package com.example.droidchat.data.network.websocket
 
 import android.util.Log
+import com.example.droidchat.data.network.model.ActiveUserIdsResponse
 import com.example.droidchat.data.network.model.MessageResponse
 import com.example.droidchat.data.network.model.MessageSocketDataRequest
 import com.example.droidchat.data.network.model.MessageSocketRequest
@@ -80,6 +81,7 @@ class ChatWebSocketServiceImpl @Inject constructor(
                 Log.d(tag, "Received message: $webSocketData")
                 when (val data = webSocketData.data) {
                     is MessageResponse -> SocketMessageResult.MessageReceived(data)
+                    is ActiveUserIdsResponse -> SocketMessageResult.ActiveUsersChanged(data)
                     else -> SocketMessageResult.NotHandledYet
                 }
             }.catch {
