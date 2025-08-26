@@ -10,6 +10,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -21,6 +22,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.droidchat.R
 import com.example.droidchat.model.Chat
+import com.example.droidchat.model.User
+import com.example.droidchat.model.fake.user1
 import com.example.droidchat.ui.components.AnimatedContent
 import com.example.droidchat.ui.components.ChatItem
 import com.example.droidchat.ui.components.ChatItemShimmer
@@ -39,8 +42,9 @@ import com.example.droidchat.ui.theme.Grey1
 @Composable
 fun ChatsRoute(
     viewModel: ChatsViewModel = hiltViewModel(),
-    navigateToChatDetails : (Chat) -> Unit
+    navigateToChatDetails: (Chat) -> Unit,
 ) {
+    val user by viewModel.currentUserFlow.collectAsStateWithLifecycle()
     val chatsListUiState = viewModel.chatsListUiState.collectAsStateWithLifecycle()
 
     ChatsScreenScreen(
@@ -48,7 +52,8 @@ fun ChatsRoute(
         onTryAgainClicked = {
             viewModel.getChats(isRefreshing = true)
         },
-        onChatClicked = navigateToChatDetails
+        onChatClicked = navigateToChatDetails,
+        user = user
     )
 }
 
@@ -58,6 +63,7 @@ fun ChatsScreenScreen(
     chatsListUiState: ChatsViewModel.ChatsListUiState,
     onTryAgainClicked: () -> Unit = {},
     onChatClicked: (Chat) -> Unit,
+    user: User?,
 ) {
     ChatScaffold(
         topBar = {
@@ -66,7 +72,7 @@ fun ChatsScreenScreen(
                     Text(
                         text = AnnotatedString.fromHtml(
                             stringResource(
-                                id = R.string.feature_chats_greeting, "Vitor"
+                                id = R.string.feature_chats_greeting, user?.firstName.orEmpty()
                             )
                         ),
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -147,8 +153,8 @@ private fun ChatsScreenLoadingPreview() {
     DroidChatTheme {
         ChatsScreenScreen(
             chatsListUiState = Loading,
-            onTryAgainClicked = {},
-            onChatClicked = {}
+            onChatClicked = {},
+            user = user1
         )
     }
 }
@@ -163,8 +169,8 @@ private fun ChatsScreenSuccessPreview(
             chatsListUiState = Success(
                 chats = chats
             ),
-            onTryAgainClicked = {},
-            onChatClicked = {}
+            onChatClicked = {},
+            user = user1
         )
     }
 }
@@ -177,8 +183,8 @@ private fun ChatsScreenSuccessEmptyPreview() {
             chatsListUiState = Success(
                 chats = emptyList()
             ),
-            onTryAgainClicked = {},
-            onChatClicked = {}
+            onChatClicked = {},
+            user = user1
         )
     }
 }
@@ -190,8 +196,8 @@ private fun ChatsScreenErrorPreview() {
     DroidChatTheme {
         ChatsScreenScreen(
             chatsListUiState = Error,
-            onTryAgainClicked = {},
-            onChatClicked = {}
+            onChatClicked = {},
+            user = user1
         )
     }
 }

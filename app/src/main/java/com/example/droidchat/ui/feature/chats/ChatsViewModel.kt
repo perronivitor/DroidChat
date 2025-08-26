@@ -2,6 +2,7 @@ package com.example.droidchat.ui.feature.chats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.droidchat.data.repository.AuthRepository
 import com.example.droidchat.data.repository.ChatsRepository
 import com.example.droidchat.model.Chat
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ChatsViewModel @Inject constructor(
     private val chatsRepository: ChatsRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _chatsListUiState = MutableStateFlow<ChatsListUiState>(ChatsListUiState.Loading)
@@ -27,6 +29,13 @@ class ChatsViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = ChatsListUiState.Loading
+        )
+
+    val currentUserFlow = authRepository.currentUserFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null
         )
 
     fun getChats(isRefreshing: Boolean = false) {
