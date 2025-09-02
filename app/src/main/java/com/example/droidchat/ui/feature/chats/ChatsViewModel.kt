@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ChatsViewModel @Inject constructor(
     private val chatsRepository: ChatsRepository,
-    private val authRepository: AuthRepository,
+    authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _chatsListUiState = MutableStateFlow<ChatsListUiState>(ChatsListUiState.Loading)

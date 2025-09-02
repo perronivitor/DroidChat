@@ -55,45 +55,41 @@ class ChatWebSocketServiceImpl @Inject constructor(
                 Log.w(tag, "Failed to connect to WebSocket.")
             }
         } catch (e: Exception) {
-            Log.e(tag, "WebSocket connection failed: ${e.message}", e)
+            Log.e(tag, "WebSocket connection failed: $e")
         }
     }
 
     override fun observerSocketMessageResultFlow(): Flow<SocketMessageResult> {
         if (socketSession == null) {
             Log.w(tag, "WebSocket session is null")
-
-            return flowOf(
-                SocketMessageResult.ConnectionError(
-                    Throwable("WebSocket session is null")
-                )
-            )
+            return flowOf(SocketMessageResult.ConnectionError(Throwable("WebSocket session is null")))
         }
 
         return socketSession!!
             .incoming
             .receiveAsFlow()
             .filterIsInstance(Frame.Text::class)
-            .map { frameText ->
-                val text = frameText.readText()
+            .map { frame ->
+                val text = frame.readText()
                 val webSocketData = Json.decodeFromString<WebSocketData>(text)
-
-                Log.d(tag, "Received message: $webSocketData")
+                Log.d(tag, "Received data: $webSocketData")
                 when (val data = webSocketData.data) {
                     is MessageResponse -> SocketMessageResult.MessageReceived(data)
+
                     is ActiveUserIdsResponse -> SocketMessageResult.ActiveUsersChanged(data)
+
                     else -> SocketMessageResult.NotHandledYet
                 }
             }.catch {
-                Log.e(tag, "WebSocket error: ${it.message}", it)
+                Log.e(tag, "WebSocket error: $it")
                 flowOf(SocketMessageResult.ConnectionError(it))
             }
     }
 
     override suspend fun sendMessage(receiverId: Int, message: String) {
         if (socketSession == null || socketSession?.isActive == false) {
-            Log.w(tag, "WebSocket session is null ou not active.")
-            throw IllegalStateException("WebSocket session is null ou not active")
+            Log.w(tag, "WebSocket session is null or not active. Cannot send message.")
+            throw IllegalStateException("WebSocket session is null or not active")
         }
 
         try {
@@ -110,7 +106,7 @@ class ChatWebSocketServiceImpl @Inject constructor(
 
             socketSession?.sendSerialized(messageRequest)
         } catch (e: Exception) {
-            Log.d(tag, "Failed to send message: ${e.message}", e)
+            Log.d(tag, "Error sending message: $e")
             throw e
         }
     }
@@ -118,7 +114,6 @@ class ChatWebSocketServiceImpl @Inject constructor(
     override suspend fun disconnect() {
         socketSession?.close()
         socketSession = null
-        Log.d(tag, "Disconnected from WebSocket.")
+        Log.d(tag, "WebSocket disconnected.")
     }
-
 }
