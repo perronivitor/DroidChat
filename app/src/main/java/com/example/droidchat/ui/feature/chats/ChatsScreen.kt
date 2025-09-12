@@ -35,6 +35,7 @@ import com.example.droidchat.ui.components.PrimaryButton
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Error
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Loading
 import com.example.droidchat.ui.feature.chats.ChatsViewModel.ChatsListUiState.Success
+import com.example.droidchat.ui.notification.NotificationPermissionHandler
 import com.example.droidchat.ui.preview.ChatListPreviewParameterProvider
 import com.example.droidchat.ui.theme.DroidChatTheme
 import com.example.droidchat.ui.theme.Grey1
@@ -54,6 +55,11 @@ fun ChatsRoute(
         },
         onChatClicked = navigateToChatDetails,
         user = user
+    )
+
+    NotificationPermissionHandler(
+        onPermissionGranted = {},
+        onPermissionPermanentlyDenied = {}
     )
 }
 
