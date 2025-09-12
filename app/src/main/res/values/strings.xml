@@ -10,6 +10,8 @@
     <string name="common_upload_photo">Galeria</string>
     <string name="common_add_profile_photo_optimizing">Otimizando…</string>
 
+    <string name="notification_chat_messages_channel_name">Mensagens de chat</string>
+
     <string name="error_message_invalid_username_or_password">E-mail ou senha incorretos</string>
     <string name="error_message_api_form_validation_failed">Erro de validação de formulário, confira os dados e tente novamente</string>
     <string name="error_message_profile_picture_uploading_failed">Erro ao fazer upload da foto de perfil, tente novamente (formatos aceitos: jpg, jpeg, png)</string>
