@@ -27,6 +27,10 @@ class MainActivity : ComponentActivity() {
                 val navigationState = rememberDroidChatNavigationState()
                 navController = navigationState.navController
 
+                val startDestination =
+                    if (intent.data == null) Route.SplashRoute else Route.ChatsRoute
+                navigationState.startDestination = startDestination
+
                 ChatApp(navigationState = navigationState)
             }
         }
