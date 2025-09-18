@@ -16,7 +16,7 @@ import com.example.droidchat.ui.components.BottomNavigationMenu
 import com.example.droidchat.ui.theme.Grey1
 
 @Composable
-fun ChatApp(navigationState: DroidChatNavigationState = rememberDroidChatNavigationState()) {
+fun ChatApp(navigationState: DroidChatNavigationState) {
     val topLevelDestination = remember(navigationState.topLevelDestination) {
         navigationState.topLevelDestination.toSet()
     }
