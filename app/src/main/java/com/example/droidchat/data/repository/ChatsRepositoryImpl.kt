@@ -67,10 +67,7 @@ class ChatsRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalPagingApi::class)
     override fun getPagedMessages(receiverId: Int): Flow<PagingData<ChatMessage>> {
         return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                enablePlaceholders = false
-            ),
+            config = PagingConfig(pageSize = 20),
             remoteMediator = MessageRemoteMediator(
                 networkDataSource = networkDataSource,
                 databaseDataSource = databaseDataSource,
