@@ -7,6 +7,9 @@ import com.example.droidchat.model.ChatMessage
 import kotlinx.coroutines.flow.Flow
 
 interface ChatsRepository {
+
+    val newMessageReceivedFlow: Flow<Unit>
+
     suspend fun getChats(offset: Int, limit: Int): Result<List<Chat>>
 
     fun getPagedMessages(receiverId: Int): Flow<PagingData<ChatMessage>>

@@ -27,7 +27,7 @@ class ChatsViewModel @Inject constructor(
         }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(),
             initialValue = ChatsListUiState.Loading
         )
 
@@ -37,6 +37,14 @@ class ChatsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
+
+    init {
+        viewModelScope.launch {
+            chatsRepository.newMessageReceivedFlow.collect {
+                getChats()
+            }
+        }
+    }
 
     fun getChats(isRefreshing: Boolean = false) {
         viewModelScope.launch {
