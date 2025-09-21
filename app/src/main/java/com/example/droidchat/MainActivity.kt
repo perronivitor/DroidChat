@@ -21,7 +21,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        Log.d("MainActivity", "onCreate: ${intent.data}")
         setContent {
             DroidChatTheme {
                 val navigationState = rememberDroidChatNavigationState()
